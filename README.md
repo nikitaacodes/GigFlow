@@ -75,55 +75,9 @@ GigFlow/
 - Filter by status (for authenticated users)
 - Real-time search with debouncing
 
-## Prerequisites
 
-- Node.js (v16 or higher)
-- MongoDB (local or MongoDB Atlas)
-- npm or yarn
-
-## Installation
-
-1. Clone the repository
-
-2. Install backend dependencies:
-
-   ```bash
-   cd backend
-   npm install
-   ```
-
-3. Install frontend dependencies:
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-
-## Configuration
-
-### Backend Environment Variables
-
-1. The `.env` file has been created with MongoDB connection string
-2. Update `JWT_SECRET` with a secure random string for production:
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb+srv://nikitaa4822_db_user:bob5f32KThdglcer@cluster0.hkyoc8u.mongodb.net/gigflow?retryWrites=true&w=majority
-   JWT_SECRET=your_jwt_secret_key_here_change_in_production
-   JWT_EXPIRE=7d
-   NODE_ENV=development
-   FRONTEND_URL=http://localhost:3000
-   ```
-
-### Frontend Environment Variables (Optional)
-
-Create `frontend/.env` if needed:
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
 
 ## Running the Application
-
-### Development Mode
 
 1. **Start the backend server:**
 
@@ -221,7 +175,3 @@ Roles are **fluid** - any user can:
 - Backend uses `nodemon` for auto-restart during development
 - Frontend uses Vite for fast HMR (Hot Module Replacement)
 - Redux DevTools available for state debugging
-
-## License
-
-ISC

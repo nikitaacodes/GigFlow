@@ -211,6 +211,22 @@ export const hireBid = asyncHandler(async (req, res) => {
     .populate('client', 'name email')
     .populate('acceptedBid');
 
+  // Emit Socket.io notification to the hired freelancer
+  const freelancerId = bid.freelancer._id || bid.freelancer;
+  const gigTitle = updatedGig.title || gig.title;
+  
+  // Import emitNotification from socket.js
+  const { emitNotification } = await import('../socket.js');
+  
+  emitNotification(freelancerId, {
+    type: 'hired',
+    message: `You have been hired for ${gigTitle}!`,
+    gigId: gig._id.toString(),
+    gigTitle: gigTitle,
+    bidId: bid._id.toString(),
+    timestamp: new Date().toISOString(),
+  });
+
   res.json({
     message: 'Freelancer hired successfully',
     gig: updatedGig,

@@ -15,7 +15,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  // Create user
+  // Creating user
   const user = await User.create({
     name,
     email,

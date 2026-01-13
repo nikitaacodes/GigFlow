@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import SocketManager from './components/SocketManager';
+import NotificationContainer from './components/NotificationContainer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -12,6 +14,8 @@ import GigDetail from './pages/GigDetail';
 function App() {
   return (
     <Router>
+      <SocketManager />
+      <NotificationContainer />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
