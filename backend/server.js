@@ -11,47 +11,87 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true, // Allow cookies
-}));
+// --------------------
+// CORS CONFIG
+// --------------------
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://localhost:5173',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// --------------------
+// MIDDLEWARE
+// --------------------
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import routes
+// --------------------
+// ROUTES
+// --------------------
 import authRoutes from './routes/authRoutes.js';
 import gigRoutes from './routes/gigRoutes.js';
 import bidRoutes from './routes/bidRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/bids', bidRoutes);
 
-// Error handler middleware (must be last)
+// --------------------
+// HEALTH CHECK (optional but recommended)
+// --------------------
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+// --------------------
+// ERROR HANDLER (must be last)
+// --------------------
 app.use(errorHandler);
 
-// Database connection
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/gigflow';
-
-// Initialize Socket.io
+// --------------------
+// SOCKET.IO INIT
+// --------------------
 import { initializeSocket } from './socket.js';
 initializeSocket(server);
+
+// --------------------
+// DATABASE + SERVER START
+// --------------------
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  console.error('❌ MONGO_URI is missing');
+  process.exit(1);
+}
 
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log('MongoDB connected successfully');
+    console.log('✅ MongoDB connected');
     server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.error('MongoDB connection error:', error);
+    console.error('❌ MongoDB connection error:', error);
+    process.exit(1);
   });
 
 export default app;
